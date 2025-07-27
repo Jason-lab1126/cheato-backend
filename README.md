@@ -1,214 +1,103 @@
 # Cheato API 🚀
 
-A modern backend API architecture for AI workflow automation, built with **TypeScript + tRPC + Zod**. Cheato automates prompt engineering and model selection to optimize AI interactions.
+Cheato is a backend I built to automate prompt engineering and LLM selection across providers. It’s modular, fast to iterate on, and built in TypeScript using tRPC and Zod. I started this project out of personal frustration — constantly switching between GPT-4, Claude, Gemini, and tweaking prompts manually felt inefficient. So I built something to make all of that easier.
+
+This repo powers a full API workflow for tasks like:
+
+* Detecting intent from user input
+* Choosing the best LLM based on that intent
+* Building and refining prompts based on tone and complexity
+* Running the prompt
+* Logging results for later analysis
+
+---
 
 ## ✨ Features
 
-- **Intent Analysis**: Automatically categorize user input and extract relevant tags
-- **Model Recommendation**: Smart model selection based on intent, budget, and performance needs
-- **Prompt Engineering**: Generate and refine prompts with tone and complexity controls
-- **LLM Execution**: Unified interface for multiple AI providers (OpenAI, Anthropic, Google, Local)
-- **Interaction History**: Complete logging and analytics of all AI interactions
-- **Vibe Coding**: Advanced prompt tuning based on tone and output style preferences
+* **Intent Analysis** – Classifies any input into a task type + tags
+* **Model Recommendation** – Picks a model based on intent, budget, and speed
+* **Prompt Engineering** – Generates a prompt and improves it with controls for tone, clarity, complexity
+* **LLM Execution** – Unified execution layer for GPT-4o, Claude 3, Gemini, or local models
+* **Logging + Analytics** – Optionally stores each interaction with metadata via Supabase
+* **Vibe Coding** – Supports different output styles (e.g. professional, friendly, creative)
 
-## 🏗️ Architecture
+---
+
+## 🏗️ Project Layout
 
 ```
 src/
 ├── server/
-│   ├── routers/          # tRPC routers for each function
-│   │   ├── intent.ts     # Intent analysis
-│   │   ├── model.ts      # Model recommendation
-│   │   ├── prompt.ts     # Prompt generation & refinement
-│   │   ├── run.ts        # LLM execution
-│   │   ├── history.ts    # Interaction logging
-│   │   └── index.ts      # Main router
-│   ├── context.ts        # tRPC context
-│   └── trpc.ts          # tRPC configuration
+│   ├── routers/
+│   │   ├── intent.ts
+│   │   ├── model.ts
+│   │   ├── prompt.ts
+│   │   ├── run.ts
+│   │   ├── history.ts
+│   │   └── index.ts
+│   ├── context.ts
+│   └── trpc.ts
 ├── utils/
-│   ├── supabase.ts      # Database utilities
-│   └── llm.ts           # LLM execution utilities
+│   ├── supabase.ts
+│   └── llm.ts
 ├── types/
-│   └── index.ts         # Shared TypeScript types
-├── env.ts               # Environment configuration
-└── index.ts             # Server entry point
+│   └── index.ts
+├── env.ts
+└── index.ts
 ```
 
-## 🚀 Quick Start
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js 18+
-- npm or yarn
-- Supabase account (for database)
+* Node 18+
+* Supabase account (optional, for logging)
 
-### Installation
-
-1. **Clone and install dependencies**
-   ```bash
-   git clone <your-repo>
-   cd cheato-api
-   npm install
-   ```
-
-2. **Set up environment variables**
-   ```bash
-   cp env.example .env
-   # Edit .env with your Supabase credentials
-   ```
-
-3. **Set up database**
-   ```bash
-   npx prisma generate
-   npx prisma db push
-   ```
-
-4. **Start development server**
-   ```bash
-   npm run dev
-   ```
-
-The API will be available at `http://localhost:3000`
-
-## 📚 API Endpoints
-
-### Health Check
-```bash
-GET /health
-```
-
-### tRPC Endpoints
-
-All API functions are available via tRPC at `/trpc/*`:
-
-#### Intent Analysis
-```typescript
-POST /trpc/intent.analyzeIntent
-{
-  "text": "Write a Python function to calculate fibonacci numbers"
-}
-```
-
-#### Model Recommendation
-```typescript
-POST /trpc/model.recommendModel
-{
-  "intentCategory": "code_generation",
-  "budget": 0.02,
-  "speed": "balanced"
-}
-```
-
-#### Prompt Generation
-```typescript
-POST /trpc/prompt.generatePrompt
-{
-  "model": "gpt-4o",
-  "intent": "code_generation",
-  "userInput": "Create a React component"
-}
-```
-
-#### Prompt Refinement
-```typescript
-POST /trpc/prompt.refinePrompt
-{
-  "prompt": "Write a function",
-  "tone": "professional",
-  "complexity": "detailed"
-}
-```
-
-#### LLM Execution
-```typescript
-POST /trpc/run.runLLM
-{
-  "model": "gpt-4o",
-  "prompt": "Write a Python function...",
-  "maxTokens": 1000,
-  "temperature": 0.7
-}
-```
-
-#### History Logging
-```typescript
-POST /trpc/history.logHistory
-{
-  "model": "gpt-4o",
-  "prompt": "Write a function...",
-  "result": "def fibonacci(n):...",
-  "metadata": {
-    "intentCategory": "code_generation",
-    "tone": "professional"
-  }
-}
-```
-
-## 🔧 Configuration
-
-### Environment Variables
+### Setup
 
 ```bash
-# Server
-PORT=3000
-NODE_ENV=development
-
-# Supabase
-SUPABASE_URL=your_supabase_url
-SUPABASE_ANON_KEY=your_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-
-# Database
-DATABASE_URL=postgresql://...
-
-# AI Providers (optional)
-OPENAI_API_KEY=your_openai_key
-ANTHROPIC_API_KEY=your_anthropic_key
-GOOGLE_AI_API_KEY=your_google_key
+git clone https://github.com/Jason-lab1126/cheato-backend.git
+cd cheato-backend
+npm install
+cp .env.example .env
+# fill in API keys and Supabase config if needed
+npm run dev
 ```
 
-### Supported Models
+API will run locally on `http://localhost:3000`.
 
-- **OpenAI**: GPT-4o, GPT-4o-mini, GPT-3.5-turbo
-- **Anthropic**: Claude-3-Opus, Claude-3-Sonnet, Claude-3-Haiku
-- **Google**: Gemini Pro, Gemini Flash
-- **Local**: Llama 3.1 (8B, 70B)
+---
 
-## 🎯 Use Cases
+## 🧪 Example Usage (via tRPC client)
 
-### 1. Automated Workflow
-```typescript
-// 1. Analyze user intent
+```ts
 const intent = await trpc.intent.analyzeIntent.mutate({
-  text: "Help me write a blog post about AI"
+  text: "Help me write a grant proposal for renewable energy"
 });
 
-// 2. Recommend best model
 const model = await trpc.model.recommendModel.mutate({
   intentCategory: intent.intentCategory
 });
 
-// 3. Generate optimized prompt
 const prompt = await trpc.prompt.generatePrompt.mutate({
   model: model.modelName,
   intent: intent.intentCategory,
-  userInput: "Help me write a blog post about AI"
+  userInput: "Help me write a grant proposal..."
 });
 
-// 4. Refine prompt
 const refined = await trpc.prompt.refinePrompt.mutate({
   prompt: prompt.rawPrompt,
   tone: "professional",
   complexity: "detailed"
 });
 
-// 5. Execute LLM
 const result = await trpc.run.runLLM.mutate({
   model: model.modelName,
   prompt: refined.optimizedPrompt
 });
 
-// 6. Log interaction
 await trpc.history.logHistory.mutate({
   model: model.modelName,
   prompt: refined.optimizedPrompt,
@@ -220,100 +109,97 @@ await trpc.history.logHistory.mutate({
 });
 ```
 
-### 2. VSCode Plugin Integration
-Perfect for VSCode plugins that need intelligent AI assistance with context-aware model selection and prompt optimization.
+---
 
-### 3. Bolt Frontend Integration
-API-first design makes it easy to integrate with modern frontend frameworks like Next.js, React, or Vue.
+## 🔧 Config
 
-## 🛠️ Development
+```env
+PORT=3000
+NODE_ENV=development
 
-### Scripts
-```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run start        # Start production server
-npm run lint         # Run ESLint
-npm run type-check   # TypeScript type checking
+SUPABASE_URL=your_supabase_url
+SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_role_key
+
+OPENAI_API_KEY=your_openai_key
+ANTHROPIC_API_KEY=your_anthropic_key
+GOOGLE_AI_API_KEY=your_google_key
+DATABASE_URL=postgresql://...
 ```
-
-### Adding New Models
-1. Add model to `ModelNameSchema` in `src/types/index.ts`
-2. Add provider mapping in `src/utils/llm.ts`
-3. Update recommendation logic in `src/server/routers/model.ts`
-
-### Adding New Intent Categories
-1. Add category to `IntentCategorySchema` in `src/types/index.ts`
-2. Update analysis logic in `src/server/routers/intent.ts`
-3. Add recommendation mapping in `src/server/routers/model.ts`
-
-## 📊 Analytics
-
-The API provides built-in analytics through the history router:
-
-```typescript
-// Get user analytics
-const analytics = await trpc.history.getAnalytics.query();
-
-// Returns:
-{
-  totalInteractions: 150,
-  modelUsage: {
-    "gpt-4o": 45,
-    "claude-3-sonnet": 30,
-    "gemini-pro": 25
-  },
-  intentDistribution: {
-    "code_generation": 60,
-    "creative_writing": 40,
-    "data_analysis": 20
-  },
-  lastInteraction: "2024-01-15T10:30:00Z"
-}
-```
-
-## 🔒 Security
-
-- **Authentication**: JWT-based auth (implemented via middleware)
-- **Rate Limiting**: Built-in rate limiting support
-- **Input Validation**: Zod schemas for all inputs
-- **CORS**: Configurable CORS policies
-- **Helmet**: Security headers
-
-## 🚀 Deployment
-
-### Docker
-```dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
-COPY dist ./dist
-EXPOSE 3000
-CMD ["npm", "start"]
-```
-
-### Vercel/Netlify
-The API is designed to work with serverless platforms. Use the tRPC adapter for your platform.
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests
-5. Submit a pull request
-
-## 📄 License
-
-MIT License - see LICENSE file for details
-
-## 🆘 Support
-
-- **Documentation**: Check the `/api` endpoint for live API docs
-- **Issues**: Create an issue on GitHub
-- **Discussions**: Use GitHub Discussions for questions
 
 ---
 
-Built with ❤️ for the AI community
+## 🧩 Supported Models
+
+* GPT-4o / GPT-4-turbo / GPT-3.5
+* Claude 3 Opus / Sonnet / Haiku
+* Gemini Pro / Gemini Flash
+* Local LLaMA 3 via HTTP
+
+---
+
+## 🧠 Why I built this
+
+I work with LLMs daily and I kept running into the same two issues:
+
+1. Choosing the right model for the job wasn’t obvious
+2. Prompt engineering took too much mental overhead
+
+So I built Cheato to abstract away the boring parts and help me get answers faster, with better quality control.
+
+It started as a personal tool, but I think others could benefit too.
+
+---
+
+## 🛠 Scripts
+
+```bash
+npm run dev          # Local dev server
+npm run build        # Build for production
+npm run start        # Run prod server
+npm run lint         # Check code style
+npm run type-check   # Validate types
+```
+
+---
+
+## 📊 Analytics Example
+
+```ts
+const analytics = await trpc.history.getAnalytics.query();
+```
+
+Returns:
+
+```json
+{
+  "totalInteractions": 132,
+  "modelUsage": {
+    "gpt-4o": 50,
+    "claude-3-sonnet": 42,
+    "gemini-pro": 25
+  },
+  "intentDistribution": {
+    "code_generation": 45,
+    "creative_writing": 38,
+    "email_drafting": 24
+  },
+  "lastInteraction": "2025-07-25T22:14:00Z"
+}
+```
+
+---
+
+## 🧱 Future Plans
+
+* Add CLI interface
+* Graph-based prompt debugging
+* Exportable prompt templates
+* Auth tokens with rate limits per user
+
+---
+
+## 📄 License
+
+MIT License
+Copyright © 2025 Zhijian Xu
